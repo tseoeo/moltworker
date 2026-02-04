@@ -1,0 +1,36 @@
+# Railway configuration for Moltbot
+# https://docs.railway.app/reference/config-as-code
+
+[build]
+# Use the Railway-specific Dockerfile
+dockerfilePath = "Dockerfile.railway"
+
+[deploy]
+# Number of instances
+numReplicas = 1
+
+# Health check endpoint
+healthcheckPath = "/health"
+healthcheckTimeout = 10
+
+# Restart policy on failure
+restartPolicyType = "ON_FAILURE"
+restartPolicyMaxRetries = 3
+
+# Start command (handled by Dockerfile CMD, but explicit here)
+startCommand = "/usr/local/bin/start-railway.sh"
+
+# ============================================================
+# IMPORTANT: Volume mount configuration
+# ============================================================
+# After deploying, you MUST manually add a volume in Railway dashboard:
+# 1. Go to your service in Railway
+# 2. Click "Add Volume"
+# 3. Set mount path: /data
+# 4. Set size: 1GB (can increase later)
+#
+# This volume persists:
+# - Paired devices (Telegram, Discord, etc.)
+# - Conversation history
+# - Config and preferences
+# ============================================================
