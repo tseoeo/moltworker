@@ -99,8 +99,8 @@ if (config.models?.providers?.anthropic?.models) {
     }
 }
 
-// Gateway configuration
-config.gateway.port = 18789;
+// Gateway configuration - use PORT env var (Railway sets this)
+config.gateway.port = parseInt(process.env.PORT) || 18789;
 config.gateway.mode = 'local';
 
 // Set gateway token if provided
@@ -234,9 +234,12 @@ EOFNODE
 # ============================================================
 # START GATEWAY
 # ============================================================
+# Use Railway's PORT env var (defaults to 18789)
+GATEWAY_PORT="${PORT:-18789}"
+
 echo ""
 echo "=== Starting Moltbot Gateway ==="
-echo "Gateway will be available on port 18789"
+echo "Gateway will be available on port $GATEWAY_PORT"
 
 # Clean up stale lock files
 rm -f /tmp/clawdbot-gateway.lock 2>/dev/null || true
@@ -247,8 +250,8 @@ BIND_MODE="lan"
 
 if [ -n "$CLAWDBOT_GATEWAY_TOKEN" ]; then
     echo "Starting gateway with token auth..."
-    exec clawdbot gateway --port 18789 --verbose --allow-unconfigured --bind "$BIND_MODE" --token "$CLAWDBOT_GATEWAY_TOKEN"
+    exec clawdbot gateway --port "$GATEWAY_PORT" --verbose --allow-unconfigured --bind "$BIND_MODE" --token "$CLAWDBOT_GATEWAY_TOKEN"
 else
     echo "Starting gateway with device pairing (no token)..."
-    exec clawdbot gateway --port 18789 --verbose --allow-unconfigured --bind "$BIND_MODE"
+    exec clawdbot gateway --port "$GATEWAY_PORT" --verbose --allow-unconfigured --bind "$BIND_MODE"
 fi

@@ -9,8 +9,10 @@ dockerfilePath = "Dockerfile.railway"
 # Number of instances
 numReplicas = 1
 
-# Health check DISABLED - gateway takes ~40s to start, exceeds Railway's 30s retry window
-# See RAILWAY_HEALTHCHECK_ISSUE.md for details
+# Health check - use 120s timeout to accommodate gateway startup (~40s)
+# Gateway listens on PORT env var (set PORT=18789 in Railway)
+healthcheckPath = "/"
+healthcheckTimeout = 120
 
 # Restart policy on failure
 restartPolicyType = "ON_FAILURE"
