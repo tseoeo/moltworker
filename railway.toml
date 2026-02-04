@@ -9,9 +9,9 @@ dockerfilePath = "Dockerfile.railway"
 # Number of instances
 numReplicas = 1
 
-# Health check endpoint
-healthcheckPath = "/health"
-healthcheckTimeout = 10
+# Health check endpoint (root path, gateway serves UI there)
+healthcheckPath = "/"
+healthcheckTimeout = 30
 
 # Restart policy on failure
 restartPolicyType = "ON_FAILURE"
