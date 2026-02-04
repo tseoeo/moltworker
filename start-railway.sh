@@ -103,6 +103,10 @@ if (config.models?.providers?.anthropic?.models) {
 config.gateway.port = parseInt(process.env.PORT) || 18789;
 config.gateway.mode = 'local';
 
+// Trust Railway's proxy - allows token auth to work behind load balancer
+// Railway uses 100.64.0.0/10 (CGNAT range) for internal proxies
+config.gateway.trustedProxies = ['100.64.0.0/10', '10.0.0.0/8'];
+
 // Set gateway token if provided
 if (process.env.CLAWDBOT_GATEWAY_TOKEN) {
     config.gateway.auth = config.gateway.auth || {};
