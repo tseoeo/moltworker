@@ -25,6 +25,8 @@ RUN apt-get update && apt-get install -y \
     xdg-utils \
     # Git for vault/repo operations
     git \
+    # curl for health checks
+    curl \
     # Clean up apt cache to reduce image size
     && rm -rf /var/lib/apt/lists/*
 
@@ -61,9 +63,9 @@ WORKDIR /root/clawd
 # Expose the gateway port
 EXPOSE 18789
 
-# Health check for Railway
+# Health check for Railway (check root path, gateway serves UI there)
 HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
-    CMD curl -f http://localhost:18789/health || exit 1
+    CMD curl -sf http://localhost:18789/ > /dev/null || exit 1
 
 # Start moltbot
 CMD ["/usr/local/bin/start-railway.sh"]
