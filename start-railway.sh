@@ -196,6 +196,15 @@ if (isOpenAI) {
     config.agents.defaults.model.primary = 'anthropic/claude-haiku-4-5-20251001';
 } else {
     // Default to Anthropic without custom base URL
+    // Still need to pass API key to clawdbot
+    if (process.env.ANTHROPIC_API_KEY) {
+        console.log('Configuring Anthropic provider with default base URL');
+        config.models = config.models || {};
+        config.models.providers = config.models.providers || {};
+        config.models.providers.anthropic = {
+            apiKey: process.env.ANTHROPIC_API_KEY
+        };
+    }
     config.agents.defaults.model.primary = 'anthropic/claude-haiku-4-5';
 }
 
