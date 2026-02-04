@@ -63,9 +63,8 @@ WORKDIR /root/clawd
 # Expose the gateway port
 EXPOSE 18789
 
-# Health check for Railway (check root path, gateway serves UI there)
-HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
-    CMD curl -sf http://localhost:18789/ > /dev/null || exit 1
+# Health check DISABLED - Railway uses its own, and gateway takes ~40s to start
+# See RAILWAY_HEALTHCHECK_ISSUE.md for details
 
 # Start moltbot
 CMD ["/usr/local/bin/start-railway.sh"]
