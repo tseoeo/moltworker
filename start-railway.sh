@@ -264,11 +264,10 @@ if (process.env.OPENROUTER_API_KEY) {
     // Set Kimi K2.5 as default model (multimodal - handles text + images)
     config.agents.defaults.model.primary = 'openrouter-custom/moonshotai/kimi-k2.5';
 
-    // Remove imageModel if set - K2.5 handles both text and images natively
-    if (config.agents.defaults.imageModel) {
-        console.log('Removing imageModel override - K2.5 is multimodal');
-        delete config.agents.defaults.imageModel;
-    }
+    // Set imageModel to K2.5 as well - Clawdbot needs this explicitly for image processing
+    // Even though K2.5 is multimodal, Clawdbot checks imageModel separately
+    config.agents.defaults.imageModel = config.agents.defaults.imageModel || {};
+    config.agents.defaults.imageModel.primary = 'openrouter-custom/moonshotai/kimi-k2.5';
 }
 
 // Override default model if specified via environment
