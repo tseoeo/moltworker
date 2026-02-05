@@ -223,20 +223,52 @@ if (isOpenAI) {
     config.agents.defaults.model.primary = 'anthropic/claude-haiku-4-5-20251001';
 }
 
-// Clean up custom openrouter provider (use built-in)
+// Clean up old custom openrouter provider (not openrouter-custom)
 if (config.models?.providers?.openrouter) {
-    console.log('Removing custom openrouter provider (using built-in)');
+    console.log('Removing old custom openrouter provider');
     delete config.models.providers.openrouter;
 }
 
-// OpenRouter models allowlist
+// OpenRouter configuration
 if (process.env.OPENROUTER_API_KEY) {
-    console.log('OpenRouter API key detected - adding Kimi models to allowlist');
+    console.log('OpenRouter API key detected - configuring Kimi K2.5 custom provider');
+    config.models = config.models || {};
+    config.models.mode = 'merge';
+    config.models.providers = config.models.providers || {};
+
+    // Custom provider for Kimi K2.5 - bypasses built-in catalog lag
+    // This is needed because clawdbot's built-in OpenRouter catalog doesn't
+    // have K2.5 metadata yet, causing "Unknown model" errors
+    config.models.providers['openrouter-custom'] = {
+        baseUrl: 'https://openrouter.ai/api/v1',
+        apiKey: process.env.OPENROUTER_API_KEY,
+        api: 'openai-responses',
+        models: [
+            {
+                id: 'moonshotai/kimi-k2.5',
+                name: 'Kimi K2.5',
+                input: ['text', 'image'],
+                contextWindow: 262144
+            }
+        ]
+    };
+
+    // Add models to allowlist
     config.agents.defaults.models = config.agents.defaults.models || {};
+    config.agents.defaults.models['openrouter-custom/moonshotai/kimi-k2.5'] = { alias: 'Kimi K2.5' };
     config.agents.defaults.models['openrouter/moonshotai/kimi-k2'] = { alias: 'Kimi K2' };
     config.agents.defaults.models['openrouter/moonshotai/kimi-k2-instruct'] = { alias: 'Kimi K2 Instruct' };
     config.agents.defaults.models['openrouter/moonshotai/kimi-k2-thinking'] = { alias: 'Kimi K2 Thinking' };
     config.agents.defaults.models['openrouter/openrouter/auto'] = { alias: 'Auto (OpenRouter)' };
+
+    // Set Kimi K2.5 as default model (multimodal - handles text + images)
+    config.agents.defaults.model.primary = 'openrouter-custom/moonshotai/kimi-k2.5';
+
+    // Remove imageModel if set - K2.5 handles both text and images natively
+    if (config.agents.defaults.imageModel) {
+        console.log('Removing imageModel override - K2.5 is multimodal');
+        delete config.agents.defaults.imageModel;
+    }
 }
 
 // Override default model if specified via environment
