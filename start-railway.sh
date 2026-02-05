@@ -245,6 +245,15 @@ if (process.env.DEFAULT_MODEL) {
     config.agents.defaults.model.primary = process.env.DEFAULT_MODEL;
 }
 
+// Configure image/vision model for multimodal tasks
+if (process.env.IMAGE_MODEL) {
+    console.log('Setting image model from env:', process.env.IMAGE_MODEL);
+    config.agents.defaults.imageModel = config.agents.defaults.imageModel || {};
+    config.agents.defaults.imageModel.primary = process.env.IMAGE_MODEL;
+    // Add to models allowlist
+    config.agents.defaults.models[process.env.IMAGE_MODEL] = { alias: 'Vision Model' };
+}
+
 // Brave Search API configuration
 if (process.env.BRAVE_API_KEY) {
     console.log('Brave API key detected - configuring web search');
