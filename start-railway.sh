@@ -239,6 +239,12 @@ if (process.env.OPENROUTER_API_KEY) {
     config.agents.defaults.models['openrouter/openrouter/auto'] = { alias: 'Auto (OpenRouter)' };
 }
 
+// Override default model if specified via environment
+if (process.env.DEFAULT_MODEL) {
+    console.log('Setting default model from env:', process.env.DEFAULT_MODEL);
+    config.agents.defaults.model.primary = process.env.DEFAULT_MODEL;
+}
+
 // Brave Search API configuration
 if (process.env.BRAVE_API_KEY) {
     console.log('Brave API key detected - configuring web search');
