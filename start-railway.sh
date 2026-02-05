@@ -252,12 +252,12 @@ if (process.env.IMAGE_MODEL) {
     config.agents.defaults.imageModel.primary = process.env.IMAGE_MODEL;
     // Add to models allowlist
     config.agents.defaults.models[process.env.IMAGE_MODEL] = { alias: 'Vision Model' };
-    // Also configure media understanding for inbound images
-    config.messages = config.messages || {};
-    config.messages.mediaUnderstanding = {
-        model: process.env.IMAGE_MODEL,
-        enabled: true
-    };
+}
+
+// Clean up any invalid config keys that might have been added
+if (config.messages?.mediaUnderstanding) {
+    console.log('Removing invalid mediaUnderstanding key');
+    delete config.messages.mediaUnderstanding;
 }
 
 // Brave Search API configuration
